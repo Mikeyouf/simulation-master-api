@@ -1,6 +1,6 @@
 // netlify/functions/assistant.js
 
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 exports.handler = async function (event, context) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // Stockée en toute sécurité sur Netlify
