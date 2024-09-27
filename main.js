@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   envoyerBtn.addEventListener('click', async () => {
     const userMessage = chatInput.value;
-    console.log(userMessage);
 
     if (userMessage) {
       // Affiche le message de l'utilisateur
@@ -46,21 +45,20 @@ document.addEventListener('DOMContentLoaded', function () {
           }),
         });
 
-        let data;
-        try {
-          data = await response.json();
-        } catch (error) {
-          console.error('Erreur lors du parsing de la réponse JSON:', error);
-        }
-
-        if (response.ok && data) {
+        // Vérifiez si la réponse est OK (statut entre 200-299)
+        if (response.ok) {
+          const data = await response.json();
           const botResponse = data.botResponse;
+
+          // Affiche la réponse du bot
           chatOutput.innerHTML += `<p><strong>Bot:</strong> ${botResponse}</p>`;
         } else {
-          const errorMessage = data ? data.error : 'Erreur: Réponse non valide du serveur';
-          chatOutput.innerHTML += `<p><strong>Bot:</strong> ${errorMessage}</p>`;
+          // Si la réponse n'est pas 2xx, essayez de récupérer un message d'erreur du corps de la réponse
+          const errorMessage = await response.text(); // Utilisez .text() pour lire la réponse complète
+          chatOutput.innerHTML += `<p><strong>Bot:</strong> Erreur: ${errorMessage}</p>`;
         }
       } catch (error) {
+        // Gestion de toute erreur réseau ou autre
         chatOutput.innerHTML += `<p><strong>Bot:</strong> Erreur de communication avec l'assistant</p>`;
         console.error('Erreur lors de l\'envoi du message:', error);
       }
