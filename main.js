@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const chatOutput = document.getElementById('chat-output-1');
   const envoyerBtn = document.getElementById('envoyer-btn-1');
 
+  let existingThreadId = null; // Initialisez à null au début
+
   envoyerBtn.addEventListener('click', async () => {
     const userMessage = chatInput.value;
 
@@ -41,21 +43,22 @@ document.addEventListener('DOMContentLoaded', function () {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userMessage
+            userMessage,
+            thread_id: existingThreadId // Utilise le thread_id existant, ou null si nouveau thread
           }),
         });
 
-        // Vérifiez si la réponse est OK (statut entre 200-299)
+        // Vérifiez si la réponse est OK (statut 200)
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json(); // Extrait le corps de la réponse JSON
+
           const botResponse = data.botResponse;
 
-          // Affiche la réponse du bot
-          chatOutput.innerHTML += `<p><strong>Bot:</strong> ${botResponse}</p>`;
+          existingThreadId = data.threadId; // Mettez à jour le threadId pour les futurs messages
+          chatOutput.innerHTML += `<p><strong>Robert Marchand :</strong> ${botResponse}</p>`;
         } else {
-          // Si la réponse n'est pas 2xx, essayez de récupérer un message d'erreur du corps de la réponse
-          const errorMessage = await response.text(); // Utilisez .text() pour lire la réponse complète
-          chatOutput.innerHTML += `<p><strong>Bot:</strong> Erreur: ${errorMessage}</p>`;
+          const errorText = await response.text(); // Obtenez la réponse texte en cas d'erreur
+          chatOutput.innerHTML += `<p><strong>Bot:</strong> Erreur: ${errorText}</p>`;
         }
       } catch (error) {
         // Gestion de toute erreur réseau ou autre
@@ -64,4 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
+
 });

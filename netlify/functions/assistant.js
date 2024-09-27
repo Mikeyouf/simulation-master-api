@@ -1,53 +1,113 @@
-// netlify/functions/assistant.js
+// Fonction pour vérifier l'état du run
+async function checkRunStatus(threadId, runId) {
+  const runStatusResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      'OpenAI-Beta': 'assistants=v2',
+    },
+  });
 
-import fetch from 'node-fetch';
+  const runStatusData = await runStatusResponse.json();
+  return runStatusData;
+}
 
-exports.handler = async function (event, context) {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // Stockée en toute sécurité sur Netlify
-  const ASSISTANT_ID = process.env.ASSISTANT_ID; // Stocké en toute sécurité sur Netlify
-
+export async function handler(event, context) {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+  const ASSISTANT_ID = process.env.ASSISTANT_ID;
   const {
-    userMessage
+    userMessage,
+    thread_id
   } = JSON.parse(event.body);
 
   try {
-    // Appel à l'API OpenAI en utilisant l'ID de l'assistant
-    const response = await fetch(`https://api.openai.com/v1/assistants/${ASSISTANT_ID}/messages`, {
+    let threadId = thread_id;
+
+    // Créer un thread si aucun n'existe
+    if (!threadId) {
+      const threadResponse = await fetch('https://api.openai.com/v1/threads', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+          'OpenAI-Beta': 'assistants=v2',
+        },
+      });
+
+      const threadData = await threadResponse.json();
+      threadId = threadData.id;
+    }
+
+    // Ajouter un message utilisateur au thread
+    await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+        'OpenAI-Beta': 'assistants=v2',
       },
       body: JSON.stringify({
-        input: userMessage,
+        role: 'user',
+        content: userMessage,
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({
-          error: error.message
-        }),
-      };
+    // Exécuter le thread pour obtenir une réponse
+    let runResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+        'OpenAI-Beta': 'assistants=v2',
+      },
+      body: JSON.stringify({
+        assistant_id: ASSISTANT_ID,
+      }),
+    });
+
+    const runData = await runResponse.json();
+
+    // Poll pour vérifier que le run est terminé
+    let runStatus = runData.status;
+    let runId = runData.id;
+    let runStatusData;
+
+    while (runStatus !== 'completed' && runStatus !== 'failed') {
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Attente de 3 secondes
+      runStatusData = await checkRunStatus(threadId, runId); // Appel de la fonction pour vérifier le statut
+      runStatus = runStatusData.status;
     }
 
-    const data = await response.json();
-    const botResponse = data.output; // Ajustez en fonction de la réponse réelle de l'API
+    // Récupérer les messages
+    if (runStatus === 'completed') {
+      const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'OpenAI-Beta': 'assistants=v2',
+        },
+      });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        botResponse
-      }),
-    };
+      const messageData = await messageResponse.json();
+      const botResponse = messageData.data.reverse().find(message => message.role === "assistant").content[0].text.value;
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          botResponse,
+          threadId
+        }),
+      };
+    } else {
+      throw new Error('Le run a échoué.');
+    }
   } catch (error) {
-    console.error('Erreur lors de l\'appel à l\'assistant:', error);
+    console.error('Erreur lors de l\'interaction avec l\'assistant:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: 'Erreur interne du serveur'
+        error: 'Erreur interne du serveur',
+        details: error.message
       }),
     };
   }
