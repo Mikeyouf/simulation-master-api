@@ -101,7 +101,7 @@ body {
   flex-direction: column;
   width: 100%;
   max-width: 600px;
-  height: 600px;
+  height: 100%;
   border: 1px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
@@ -113,12 +113,13 @@ body {
 .chat-window {
   flex-grow: 1;
   padding: 10px;
-  overflow-y: auto;
+  overflow-y: auto; /* Assure le scroll si contenu dépasse */
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 70vh; /* Limite la hauteur pour que le chat ne dépasse pas */
 }
 
 /* Conteneur de l'input et du bouton d'envoi */
@@ -192,6 +193,6 @@ body {
   .chatbot-embed iframe {
     width: 100%;
     height: 100% !important;
-    min-height: 700px !important;
+    /* min-height: 700px !important; */
   }
 }
