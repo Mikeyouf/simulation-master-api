@@ -1,5 +1,5 @@
-// import fetch from 'node-fetch';
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+// const fetch = require('node-fetch');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const ASSISTANT_ID = process.env.ASSISTANT_ID;
