@@ -47,11 +47,11 @@ body {
 }
 
 .glider-prev {
-  left: 50px !important;
+  left: 10px !important;
 }
 
 .glider-next {
-  right: 50px !important;
+  right: 10px !important;
 }
 
 .chatbot-container {
