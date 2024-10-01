@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* Réinitialisation des marges et paddings */
 * {
   margin: 0;
@@ -10,6 +8,7 @@
 html,
 body {
   height: 100%;
+  overflow: hidden; /* Désactiver le scrolling inutile */
 }
 
 body {
@@ -17,30 +16,55 @@ body {
 }
 
 /* Conteneur principal du carrousel */
-.swiper {
-  width: 100%;
-  height: 100%;
+.glider-contain {
   position: relative;
+  width: 100%;
+  height: 100vh; /* S'assure que le conteneur occupe toute la hauteur de la fenêtre */
+  overflow: hidden; /* Assure qu'il n'y ait pas de défilement */
 }
 
-/* Slides du carrousel */
-.swiper-slide {
+.glider {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden; /* Empêche le défilement horizontal */
+  width: 100%;
 }
 
-/* Conteneur du chatbot */
+.glider-prev,
+.glider-next {
+  background: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 50%; /* Centre les flèches verticalement */
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.glider-prev {
+  left: 10px; /* Positionner la flèche à gauche */
+}
+
+.glider-next {
+  right: 10px; /* Positionner la flèche à droite */
+}
+
+.glider-prev:hover,
+.glider-next:hover {
+  background: #45a049;
+}
+
 .chatbot-container {
-  position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh; /* Chaque slide occupe toute la hauteur de la fenêtre */
   background-size: cover;
   background-position: center;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-direction: column; /* Permet de centrer le contenu verticalement */
+  position: relative;
 }
 
 /* Nom du chatbot */
@@ -57,42 +81,6 @@ body {
   max-width: 400px;
   height: 70vh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.chatbot-embed iframe {
-  width: 100%;
-  height: 100% !important;
-  min-height: 550px !important;
-}
-
-/* Styles des flèches de navigation */
-.swiper-button-prev,
-.swiper-button-next {
-  color: #000;
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 999;
-}
-
-.swiper-button-prev {
-  left: -10px; /* Positionner à gauche */
-}
-
-.swiper-button-next {
-  right: 10px; /* Positionner à droite */
-}
-
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 30px;
-}
-
-/* Centrage du carrousel */
-.swiper-wrapper {
-  justify-content: center;
 }
 
 /* Styles pour l'interface du chat */
@@ -156,43 +144,4 @@ body {
 
 .send-button:hover {
   background-color: #45a049;
-}
-
-/* Style des messages de l'utilisateur */
-.chat-message.user {
-  align-self: flex-end;
-  background-color: #dcf8c6;
-  padding: 10px;
-  border-radius: 10px;
-  max-width: 80%;
-  word-wrap: break-word;
-  font-size: 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Style des messages du bot */
-.chat-message.bot {
-  align-self: flex-start;
-  background-color: #f1f0f0;
-  padding: 10px;
-  border-radius: 10px;
-  max-width: 80%;
-  word-wrap: break-word;
-  font-size: 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsivité */
-@media screen and (min-width: 992px) {
-  .swiper {
-    width: 100%;
-    max-width: 90vw;
-    margin: 0 auto;
-  }
-
-  .chatbot-embed iframe {
-    width: 100%;
-    height: 100% !important;
-    /* min-height: 700px !important; */
-  }
 }

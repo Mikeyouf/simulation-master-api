@@ -14,16 +14,14 @@
 <body>
 
   <!-- Conteneur principal du carrousel -->
-  <div class="swiper">
-    <div class="swiper-wrapper">
-
+  <div class="glider-contain">
+    <button class="glider-prev">«</button> <!-- Bouton pour aller à la slide précédente -->
+    <div class="glider">
       <!-- Slide 1 -->
-      <div class="swiper-slide active">
-        <div class="chatbot-container" style="background-image: url('background1.jpg');">
+      <div>
+        <div class="chatbot-container" style="background-image: url('pompier.png');">
           <h2 class="chatbot-name">Pompier</h2>
           <div class="chatbot-embed">
-            <!-- Code du Chatbot 1 -->
-            <!-- Interface de discussion pour un chatbot -->
             <div class="chat-interface">
               <div id="chat-output-1" class="chat-window"></div>
               <div class="chat-input-container">
@@ -36,12 +34,10 @@
       </div>
 
       <!-- Slide 2 -->
-      <div class="swiper-slide">
+      <div>
         <div class="chatbot-container" style="background-image: url('background2.jpg');">
           <h2 class="chatbot-name">Gendarme</h2>
           <div class="chatbot-embed">
-            <!-- Code du Chatbot 2 -->
-            <!-- Interface de discussion pour un chatbot -->
             <div class="chat-interface">
               <div id="chat-output-2" class="chat-window"></div>
               <div class="chat-input-container">
@@ -54,17 +50,15 @@
       </div>
 
       <!-- Slide 3 -->
-      <div class="swiper-slide">
+      <div>
         <div class="chatbot-container" style="background-image: url('background3.jpg');">
           <h2 class="chatbot-name">Citoyen 1</h2>
           <div class="chatbot-embed">
-            <!-- Code du Chatbot 3 -->
-            <!-- Interface de discussion pour un chatbot -->
             <div class="chat-interface">
-              <div id="chat-output" class="chat-window"></div>
+              <div id="chat-output-3" class="chat-window"></div>
               <div class="chat-input-container">
-                <input type="text" id="chat-input" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn" class="send-button">Envoyer</button>
+                <input type="text" id="chat-input-3" placeholder="Tapez votre message..." class="chat-input">
+                <button id="envoyer-btn-3" class="send-button">Envoyer</button>
               </div>
             </div>
           </div>
@@ -72,17 +66,15 @@
       </div>
 
       <!-- Slide 4 -->
-      <div class="swiper-slide">
+      <div>
         <div class="chatbot-container" style="background-image: url('background4.jpg');">
           <h2 class="chatbot-name">Citoyen 2</h2>
           <div class="chatbot-embed">
-            <!-- Code du Chatbot 4 -->
-            <!-- Interface de discussion pour un chatbot -->
             <div class="chat-interface">
-              <div id="chat-output" class="chat-window"></div>
+              <div id="chat-output-4" class="chat-window"></div>
               <div class="chat-input-container">
-                <input type="text" id="chat-input" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn" class="send-button">Envoyer</button>
+                <input type="text" id="chat-input-4" placeholder="Tapez votre message..." class="chat-input">
+                <button id="envoyer-btn-4" class="send-button">Envoyer</button>
               </div>
             </div>
           </div>
@@ -90,29 +82,22 @@
       </div>
 
       <!-- Slide 5 -->
-      <div class="swiper-slide">
+      <div>
         <div class="chatbot-container" style="background-image: url('background5.jpg');">
           <h2 class="chatbot-name">Citoyen 3</h2>
           <div class="chatbot-embed">
-            <!-- Code du Chatbot 5 -->
-            <!-- Interface de discussion pour un chatbot -->
             <div class="chat-interface">
-              <div id="chat-output" class="chat-window"></div>
+              <div id="chat-output-5" class="chat-window"></div>
               <div class="chat-input-container">
-                <input type="text" id="chat-input" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn" class="send-button">Envoyer</button>
+                <input type="text" id="chat-input-5" placeholder="Tapez votre message..." class="chat-input">
+                <button id="envoyer-btn-5" class="send-button">Envoyer</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-
-    <!-- Flèches de navigation -->
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
-
+    <button class="glider-next">»</button> <!-- Bouton pour aller à la slide suivante -->
   </div>
 
   <script type="module" src="/main.js"></script>
