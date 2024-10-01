@@ -35,6 +35,8 @@ body {
 .glider-prev,
 .glider-next {
   display: block;
+  width: 40px;
+  height: 40px;
   border: none;
   color: #4caf50;
   padding: 10px;
