@@ -32,10 +32,11 @@ body {
 
 .glider-prev,
 .glider-next {
+  display: block;
   border: none;
   color: #4caf50;
   padding: 10px;
-  font-size: 3ch;
+  font-size: 3rem;
   position: absolute;
   top: 50%; /* Centre les flèches verticalement */
   transform: translateY(-50%);

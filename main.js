@@ -3,12 +3,12 @@ import 'glider-js/glider.min.css'; // Importation du fichier CSS de Glider
 import './style.css'; // Ton fichier CSS personnalisé
 
 document.addEventListener('DOMContentLoaded', function () {
-  const isMobile = window.innerWidth <= 768;
+  // const isMobile = window.innerWidth <= 768;
 
   new Glider(document.querySelector('.glider'), {
     slidesToShow: 1,
     dots: '#dots',
-    draggable: isMobile,
+    draggable: false,
     loop: true,
     controls: true,
     rewind: true,
@@ -18,12 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  window.addEventListener('resize', function () {
-    // Actualise la détection mobile si la fenêtre est redimensionnée
-    const isMobile = window.innerWidth <= 768;
-    glider.setOption({
-      draggable: isMobile
-    });
-  });
+  // window.addEventListener('resize', function () {
+  //   // Actualise la détection mobile si la fenêtre est redimensionnée
+  //   const isMobile = window.innerWidth <= 768;
+  //   glider.setOption({
+  //     draggable: isMobile
+  //   });
+  // });
 
 });
