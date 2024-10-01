@@ -29,6 +29,7 @@ body {
   display: flex;
   overflow: hidden; /* Empêche le défilement horizontal */
   width: 100%;
+  max-width: 100dvw;
 }
 
 .glider-prev,
@@ -42,6 +43,7 @@ body {
   top: 50%;
   transform: translateY(-50%);
   z-index: 999;
+  border: 3px solid red;
 }
 
 .glider-prev {
