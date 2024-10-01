@@ -35,23 +35,23 @@ body {
 .glider-prev,
 .glider-next {
   display: block;
-  width: 50px;
-  height: 50px;
+  width: 50px !important;
+  height: 50px !important;
   border: none;
   color: #4caf50 !important;
-  font-size: 4rem;
+  font-size: 4rem !important;
   position: absolute;
-  top: 50%;
+  top: 50% !important;
   transform: translateY(-50%);
   z-index: 999;
 }
 
 .glider-prev {
-  left: 50px;
+  left: 50px !important;
 }
 
 .glider-next {
-  right: 50px;
+  right: 50px !important;
 }
 
 .chatbot-container {
