@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   new Glider(document.querySelector('.glider'), {
     slidesToShow: 1,
     dots: '#dots',
-    draggable: true,
+    draggable: false,
     loop: true,
     controls: true,
     rewind: true,
