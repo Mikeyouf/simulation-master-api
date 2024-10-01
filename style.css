@@ -35,7 +35,7 @@ body {
   border: none;
   color: #4caf50;
   padding: 10px;
-  cursor: pointer;
+  font-size: 3ch;
   position: absolute;
   top: 50%; /* Centre les flèches verticalement */
   transform: translateY(-50%);
@@ -193,11 +193,13 @@ body {
   }
 
   .glider-prev {
-    left: 10px; /* Positionner la flèche à gauche */
+    left: 10px;
+    cursor: pointer;
   }
 
   .glider-next {
-    right: 10px; /* Positionner la flèche à droite */
+    right: 10px;
+    cursor: pointer;
   }
 
   .chat-interface {
