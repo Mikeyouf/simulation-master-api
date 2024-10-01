@@ -38,13 +38,12 @@ body {
   width: 50px;
   height: 50px;
   border: none;
-  color: #4caf50;
+  color: #4caf50 !important;
   font-size: 4rem;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 999;
-  /* border: 2px solid red; */
 }
 
 .glider-prev {
@@ -53,11 +52,6 @@ body {
 
 .glider-next {
   right: 50px;
-}
-
-.glider-prev:hover,
-.glider-next:hover {
-  color: #45a049;
 }
 
 .chatbot-container {
