@@ -39,17 +39,17 @@ body {
   padding: 10px;
   font-size: 3rem;
   position: absolute;
-  top: 50%; /* Centre les flèches verticalement */
+  top: 50%;
   transform: translateY(-50%);
   z-index: 999;
 }
 
 .glider-prev {
-  left: 0; /* Positionner la flèche à gauche */
+  left: 30px;
 }
 
 .glider-next {
-  right: 0; /* Positionner la flèche à droite */
+  right: 30px;
 }
 
 .glider-prev:hover,
