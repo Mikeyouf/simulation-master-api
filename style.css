@@ -31,9 +31,9 @@ body {
 
 .glider-prev,
 .glider-next {
-  background: #4caf50;
+  /* background: #4caf50; */
   border: none;
-  color: white;
+  color: #4caf50;
   padding: 10px;
   cursor: pointer;
   position: absolute;
@@ -52,7 +52,7 @@ body {
 
 .glider-prev:hover,
 .glider-next:hover {
-  background: #45a049;
+  color: #45a049;
 }
 
 .chatbot-container {
@@ -79,7 +79,7 @@ body {
 .chatbot-embed {
   width: 100%;
   max-width: 400px;
-  height: 70vh;
+  height: 100vh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -87,6 +87,7 @@ body {
 .chat-interface {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 100%;
   max-width: 600px;
   height: 100%;
@@ -107,7 +108,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 70vh;
+  max-height: 100%;
   background-repeat: no-repeat;
   background-position: bottom left; /* Position en bas à gauche */
   background-size: 100px 100px;
@@ -170,4 +171,17 @@ body {
 
 .send-button:hover {
   background-color: #45a049;
+}
+
+@media screen and (min-width: 992px) {
+  .chatbot-embed {
+    width: 100%;
+    max-width: 500px;
+    height: 80vh;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .chat-window {
+    background-size: 200px 200px;
+  }
 }
