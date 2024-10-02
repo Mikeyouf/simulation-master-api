@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
     chatOutput.scrollTop = chatOutput.scrollHeight;
   }
 
+  // Fonction pour supprimer les annotations de type [source]
+  function cleanResponse(text) {
+    return text.replace(/〖.*?〗/g, '');
+  }
+
   const sendMessage = async () => {
     const userMessage = chatInput.value;
     if (userMessage) {
@@ -37,6 +42,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (response.ok) {
           const data = await response.json();
           const botResponse = data.botResponse;
+
+          // Nettoyage de la réponse pour retirer les annotations de type [source]
+          botResponse = cleanResponse(botResponse);
+
           existingThreadId = data.threadId;
           chatOutput.innerHTML += `<p><strong>Pompier:</strong> ${botResponse}</p>`;
         } else {

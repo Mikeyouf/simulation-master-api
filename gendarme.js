@@ -1,4 +1,4 @@
-// pompier.js
+// gendarme.js
 import './style.css';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function scrollToBottom() {
     chatOutput.scrollTop = chatOutput.scrollHeight;
+  }
+
+  // Fonction pour supprimer les annotations de type [source]
+  function cleanResponse(text) {
+    return text.replace(/〖.*?〗/g, '');
   }
 
   const sendMessage = async () => {
@@ -36,9 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (response.ok) {
           const data = await response.json();
-          const botResponse = data.botResponse;
+          let botResponse = data.botResponse;
+
+          // Nettoyage de la réponse pour retirer les annotations de type [source]
+          botResponse = cleanResponse(botResponse);
+
           existingThreadId = data.threadId;
           chatOutput.innerHTML += `<p><strong>Pompier:</strong> ${botResponse}</p>`;
+          scrollToBottom();
         } else {
           const errorText = await response.text();
           chatOutput.innerHTML += `<p><strong>Erreur:</strong> ${errorText}</p>`;
