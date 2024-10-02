@@ -19,12 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  window.addEventListener('resize', function () {
-    // Actualise la détection mobile si la fenêtre est redimensionnée
-    const isMobile = window.innerWidth <= 768;
-    glider.setOption({
-      draggable: isMobile
-    });
-  });
+  // window.addEventListener('resize', function () {
+  //   // Actualise la détection mobile si la fenêtre est redimensionnée
+  //   const isMobile = window.innerWidth <= 768;
+  //   glider.setOption({
+  //     draggable: isMobile
+  //   });
+  // });
 
 });

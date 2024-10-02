@@ -14,15 +14,16 @@ document.addEventListener('DOMContentLoaded', function () {
     chatOutput.scrollTop = chatOutput.scrollHeight;
   }
 
-  // Fonction pour supprimer les annotations de type [source]
+  // Fonction pour supprimer les annotations de type  
   function cleanResponse(text) {
-    return text.replace(/〖.*?〗/g, '');
+    // Remplacement des annotations de type  
+    return text.replace(/【\d+:\d+†source】/g, '');
   }
 
   const sendMessage = async () => {
     const userMessage = chatInput.value;
     if (userMessage) {
-      chatOutput.innerHTML += `<p><strong>Vous:</strong> ${userMessage}</p>`;
+      chatOutput.innerHTML += `<p class="user-message"><strong>Vous:</strong> ${userMessage}</p>`;
       chatInput.value = '';
       scrollToBottom();
 
@@ -47,13 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
           botResponse = cleanResponse(botResponse);
 
           existingThreadId = data.threadId;
-          chatOutput.innerHTML += `<p><strong>Pompier:</strong> ${botResponse}</p>`;
+          chatOutput.innerHTML += `<p class="bot-message"><strong>Pompier:</strong> ${botResponse}</p>`;
         } else {
           const errorText = await response.text();
           chatOutput.innerHTML += `<p><strong>Erreur:</strong> ${errorText}</p>`;
         }
       } catch (error) {
-        chatOutput.innerHTML += `<p><strong>Erreur:</strong> Erreur de communication avec l'assistant</p>`;
+        chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> Erreur de communication avec l'assistant</p>`;
         console.error('Erreur lors de l\'envoi du message:', error);
       }
     }
