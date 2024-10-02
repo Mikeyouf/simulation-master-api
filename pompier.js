@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (response.ok) {
           const data = await response.json();
-          const botResponse = data.botResponse;
+          let botResponse = data.botResponse;
 
           // Nettoyage de la réponse pour retirer les annotations de type [source]
           botResponse = cleanResponse(botResponse);
