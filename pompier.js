@@ -44,10 +44,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     localStorage.setItem(historyKey, JSON.stringify(history));
   }
 
-  // Fonction pour supprimer les annotations de type [source]
+  // Fonction pour supprimer les annotations de type [source] et autres balises JSON
   function cleanResponse(text) {
-    return text.replace(/【\d+:\d+†source】/g, '');
+    // Supprimer les annotations de type [source]
+    let cleanedText = text.replace(/【\d+:\d+†source】/g, '');
+
+    // Supprimer les références de données JSON du type [4:0assistant_pompier_data.json]
+    cleanedText = cleanedText.replace(/\[\d+:\d+[^\]]+\]/g, '');
+
+    return cleanedText;
   }
+
 
   // Fonction pour faire défiler jusqu'en bas
   function scrollToBottom() {
