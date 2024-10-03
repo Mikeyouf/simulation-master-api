@@ -12,6 +12,7 @@
     "vite": "^5.4.1"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.5.0",
     "dotenv": "^16.4.5",
     "glider-js": "^1.7.9",
     "node-fetch": "^2.7.0",
