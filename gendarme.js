@@ -46,15 +46,14 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Fonction pour supprimer les annotations de type [source] et autres balises JSON
   function cleanResponse(text) {
-    // Supprimer les annotations de type [source]
-    let cleanedText = text.replace(/【\d+:\d+†source】/g, '');
+    // Supprimer les annotations OpenAI
+    const cleanedText = text.replace(/【\d+:\d+†[^\]]+】/g, '').trim();
 
-    // Supprimer les références de données JSON du type [4:0assistant_pompier_data.json]
-    cleanedText = cleanedText.replace(/\[\d+:\d+[^\]]+\]/g, '');
+    // Remplacer les formats Markdown [texte](lien) par des liens HTML corrects
+    const formattedText = cleanedText.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 
-    return cleanedText;
+    return formattedText;
   }
-
 
   // Fonction pour faire défiler jusqu'en bas
   function scrollToBottom() {
