@@ -3,105 +3,167 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Jeu Interactif - Chatbots</title>
+  <title>Centre de gestion de crise</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
-
-  <!-- Conteneur principal du carrousel -->
-  <div class="glider-contain">
-    <button class="glider-prev">«</button> <!-- Bouton pour aller à la slide précédente -->
-    <div class="glider">
-      <!-- Slide 1 -->
-      <div>
-        <div class="chatbot-container">
-          <!-- <h2 class="chatbot-name">Pompier</h2> -->
-          <div class="chatbot-embed">
-            <div class="chat-interface">
-              <div id="chat-output-1" class="chat-window"></div>
-              <div class="chat-input-container">
-                <input type="text" id="chat-input-1" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn-1" class="send-button">Envoyer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 2 -->
-      <div>
-        <div class="chatbot-container" style="background-image: url('background2.jpg');">
-          <!-- <h2 class="chatbot-name">Gendarme</h2> -->
-          <div class="chatbot-embed">
-            <div class="chat-interface">
-              <div id="chat-output-2" class="chat-window"></div>
-              <div class="chat-input-container">
-                <input type="text" id="chat-input-2" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn-2" class="send-button">Envoyer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 3 -->
-      <div>
-        <div class="chatbot-container" style="background-image: url('background3.jpg');">
-          <!-- <h2 class="chatbot-name">Citoyen 1</h2> -->
-          <div class="chatbot-embed">
-            <div class="chat-interface">
-              <div id="chat-output-3" class="chat-window"></div>
-              <div class="chat-input-container">
-                <input type="text" id="chat-input-3" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn-3" class="send-button">Envoyer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 4 -->
-      <div>
-        <div class="chatbot-container" style="background-image: url('background4.jpg');">
-          <!-- <h2 class="chatbot-name">Citoyen 2</h2> -->
-          <div class="chatbot-embed">
-            <div class="chat-interface">
-              <div id="chat-output-4" class="chat-window"></div>
-              <div class="chat-input-container">
-                <input type="text" id="chat-input-4" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn-4" class="send-button">Envoyer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 5 -->
-      <div>
-        <div class="chatbot-container" style="background-image: url('background5.jpg');">
-          <!-- <h2 class="chatbot-name">Citoyen 3</h2> -->
-          <div class="chatbot-embed">
-            <div class="chat-interface">
-              <div id="chat-output-5" class="chat-window"></div>
-              <div class="chat-input-container">
-                <input type="text" id="chat-input-5" placeholder="Tapez votre message..." class="chat-input">
-                <button id="envoyer-btn-5" class="send-button">Envoyer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-content">
+      <h1>Centre de gestion de crise</h1>
+      <nav>
+        <button class="nav-button active" data-slide="0">Dr. Damienne Fournier</button>
+        <button class="nav-button" data-slide="1">Gendarme</button>
+        <button class="nav-button" data-slide="2">Citoyen 1</button>
+        <button class="nav-button" data-slide="3">Citoyen 2</button>
+        <button class="nav-button" data-slide="4">Citoyen 3</button>
+      </nav>
     </div>
+  </header>
 
-    <button class="glider-next">»</button> <!-- Bouton pour aller à la slide suivante -->
-  </div>
+  <!-- Main content -->
+  <main class="main-content">
+    <!-- Conteneur principal du carrousel -->
+    <div class="glider-contain">
+      <button class="glider-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button> 
+      <div class="glider">
+        <!-- Slide 1 -->
+        <div>
+          <div class="chatbot-container">
+            <h2 class="chatbot-name">Gestion de crise</h2>
+            <div class="chatbot-embed">
+              <div class="chat-interface">
+                <div id="chat-output-1" class="chat-window">
+                  <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+                <div class="chat-input-container">
+                  <input type="text" id="chat-input-1" placeholder="Tapez votre message..." class="chat-input">
+                  <button id="envoyer-btn-1" class="send-button">Envoyer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <script type="module" src="/main.js"></script>
-  <script type="module" src="/pompier.js"></script>
-  <script type="module" src="/gendarme.js"></script>
+        <!-- Slide 2 -->
+        <div>
+          <div class="chatbot-container" style="background-image: url('background2.jpg');">
+            <!-- <h2 class="chatbot-name">Gendarme</h2> -->
+            <div class="chatbot-embed">
+              <div class="chat-interface">
+                <div id="chat-output-2" class="chat-window">
+                  <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+                <div class="chat-input-container">
+                  <input type="text" id="chat-input-2" placeholder="Tapez votre message..." class="chat-input">
+                  <button id="envoyer-btn-2" class="send-button">Envoyer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div>
+          <div class="chatbot-container" style="background-image: url('background3.jpg');">
+            <!-- <h2 class="chatbot-name">Citoyen 1</h2> -->
+            <div class="chatbot-embed">
+              <div class="chat-interface">
+                <div id="chat-output-3" class="chat-window">
+                  <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+                <div class="chat-input-container">
+                  <input type="text" id="chat-input-3" placeholder="Tapez votre message..." class="chat-input">
+                  <button id="envoyer-btn-3" class="send-button">Envoyer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div>
+          <div class="chatbot-container" style="background-image: url('background4.jpg');">
+            <!-- <h2 class="chatbot-name">Citoyen 2</h2> -->
+            <div class="chatbot-embed">
+              <div class="chat-interface">
+                <div id="chat-output-4" class="chat-window">
+                  <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+                <div class="chat-input-container">
+                  <input type="text" id="chat-input-4" placeholder="Tapez votre message..." class="chat-input">
+                  <button id="envoyer-btn-4" class="send-button">Envoyer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div>
+          <div class="chatbot-container" style="background-image: url('background5.jpg');">
+            <!-- <h2 class="chatbot-name">Citoyen 3</h2> -->
+            <div class="chatbot-embed">
+              <div class="chat-interface">
+                <div id="chat-output-5" class="chat-window">
+                  <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+                <div class="chat-input-container">
+                  <input type="text" id="chat-input-5" placeholder="Tapez votre message..." class="chat-input">
+                  <button id="envoyer-btn-5" class="send-button">Envoyer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="glider-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>&copy; <span id="current-year"></span> Créagency'M. Tous droits réservés.</p>
+      <div class="footer-nav">
+        <a href="#" class="footer-link">À propos</a>
+        <a href="#" class="footer-link">Contact</a>
+        <a href="#" class="footer-link">Mentions légales</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="main.js"></script>
+  <script type="module" src="pompier.js"></script>
+  <script type="module" src="gendarme.js"></script>
+  <script type="module" src="citoyen-1.js"></script>
+  <script type="module" src="citoyen-2.js"></script>
+  <script type="module" src="citoyen-3.js"></script>
 </body>
 
 </html>

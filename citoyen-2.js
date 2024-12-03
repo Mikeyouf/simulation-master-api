@@ -2,13 +2,12 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import './style.css';
 
 document.addEventListener('DOMContentLoaded', async function () {
-  const chatInput = document.getElementById('chat-input-2');
-  const chatOutput = document.getElementById('chat-output-2');
-  const envoyerBtn = document.getElementById('envoyer-btn-2');
-  const ASSISTANT_ID_GENDARME = 'asst_TOUKhERXwfs3BN387LIXmodn';
-  const MAX_MESSAGES = 2000; // Limite de messages à stocker dans le localStorage
+  const chatInput = document.getElementById('chat-input-4');
+  const chatOutput = document.getElementById('chat-output-4');
+  const envoyerBtn = document.getElementById('envoyer-btn-4');
+  const ASSISTANT_ID_CITOYEN2 = 'asst_TOUKhERXwfs3BN387LIXmodn'; // À remplacer par l'ID correct
+  const MAX_MESSAGES = 2000;
 
-  // Fonction pour récupérer ou générer l'ID utilisateur avec FingerprintJS
   let userId = localStorage.getItem('userId');
   if (!userId) {
     const fpPromise = FingerprintJS.load();
@@ -18,10 +17,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     localStorage.setItem('userId', userId);
   }
 
-  const historyKey = `chatbotHistory_${userId}_${ASSISTANT_ID_GENDARME}`;
+  const historyKey = `chatbotHistory_${userId}_${ASSISTANT_ID_CITOYEN2}`;
   let existingThreadId = null;
 
-  // Fonction pour charger l'historique des messages depuis le localStorage
   function loadHistory() {
     const history = JSON.parse(localStorage.getItem(historyKey)) || [];
     history.forEach(msg => {
@@ -31,7 +29,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     scrollToBottom();
   }
 
-  // Fonction pour sauvegarder les messages dans le localStorage avec gestion de la limite
   function saveMessage(sender, text) {
     let history = JSON.parse(localStorage.getItem(historyKey)) || [];
     if (history.length >= MAX_MESSAGES) {
@@ -44,18 +41,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     localStorage.setItem(historyKey, JSON.stringify(history));
   }
 
-  // Fonction pour supprimer les annotations de type [source] et autres balises JSON
   function cleanResponse(text) {
-    // Supprimer les annotations OpenAI
-    const cleanedText = text.replace(/【\d+:\d+†[^\]]+】/g, '').trim();
-
-    // Remplacer les formats Markdown [texte](lien) par des liens HTML corrects
-    const formattedText = cleanedText.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-
-    return formattedText;
+    // Supprimer les annotations de type [source]
+    text = text.replace(/\[source\][^\]]*\]/g, '');
+    // Supprimer les balises JSON
+    text = text.replace(/```json[\s\S]*?```/g, '');
+    text = text.replace(/```[\s\S]*?```/g, '');
+    return text.trim();
   }
 
-  // Fonction pour faire défiler jusqu'en bas
   function scrollToBottom() {
     chatOutput.scrollTop = chatOutput.scrollHeight;
   }
@@ -69,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       chatInput.value = '';
       scrollToBottom();
 
+      // Ajouter l'animation des points
       try {
         // Afficher l'animation pendant l'appel API
         chatOutput.innerHTML += `<p class="bot-message typing-bubble">
@@ -84,10 +79,16 @@ document.addEventListener('DOMContentLoaded', async function () {
           body: JSON.stringify({
             userMessage,
             thread_id: existingThreadId,
-            assistant_id: ASSISTANT_ID_GENDARME,
+            assistant_id: ASSISTANT_ID_CITOYEN2,
             user_id: userId,
           }),
         });
+
+        // Supprimer l'animation des points
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
 
         if (response.ok) {
           const data = await response.json();
@@ -96,24 +97,21 @@ document.addEventListener('DOMContentLoaded', async function () {
 
           existingThreadId = data.threadId;
 
-          // Remplacer l'animation par la réponse du bot
-          const messages = chatOutput.getElementsByClassName('bot-message');
-          const lastMessage = messages[messages.length - 1];
-          lastMessage.innerHTML = `<p class="bot-message">${botResponse}</p>`;
-          lastMessage.classList.remove('typing-bubble');
-
+          // Afficher et sauvegarder la réponse du bot
+          chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
           scrollToBottom();
         } else {
           const errorText = await response.text();
-          const messages = chatOutput.getElementsByClassName('bot-message');
-          const lastMessage = messages[messages.length - 1];
-          lastMessage.innerHTML = `<strong>Erreur:</strong> ${errorText}`;
+          chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> ${errorText}</p>`;
         }
       } catch (error) {
-        const messages = chatOutput.getElementsByClassName('bot-message');
-        const lastMessage = messages[messages.length - 1];
-        lastMessage.innerHTML = `<strong>Erreur:</strong> Erreur de communication avec l'assistant`;
+        // Supprimer l'animation des points en cas d'erreur
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
+        chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> Erreur de communication avec l'assistant</p>`;
         console.error('Erreur lors de l\'envoi du message:', error);
       }
     }
@@ -123,9 +121,9 @@ document.addEventListener('DOMContentLoaded', async function () {
   loadHistory();
 
   envoyerBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
+
+  chatInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
       sendMessage();
     }
   });

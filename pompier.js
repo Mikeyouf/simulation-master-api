@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   function loadHistory() {
     const history = JSON.parse(localStorage.getItem(historyKey)) || [];
     history.forEach(msg => {
-      const messageHtml = `<p class="${msg.sender === 'user' ? 'user-message' : 'bot-message'}"><strong>${msg.sender === 'user' ? 'Vous' : 'Pompier'}:</strong> ${msg.text}</p>`;
+      const messageHtml = `<p class="${msg.sender === 'user' ? 'user-message' : 'bot-message'}">${msg.text}</p>`;
       chatOutput.innerHTML += messageHtml;
     });
     scrollToBottom();
@@ -64,12 +64,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     const userMessage = chatInput.value;
     if (userMessage) {
       // Afficher et sauvegarder le message utilisateur
-      chatOutput.innerHTML += `<p class="user-message"> ${userMessage}</p>`;
+      chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
       chatInput.value = '';
       scrollToBottom();
 
       try {
+        // Afficher l'animation pendant l'appel API
+        chatOutput.innerHTML += `<p class="bot-message typing-bubble">
+          <span></span><span></span><span></span>
+        </p>`;
+        scrollToBottom();
+
         const response = await fetch('/.netlify/functions/assistant', {
           method: 'POST',
           headers: {
@@ -94,8 +100,12 @@ document.addEventListener('DOMContentLoaded', async function () {
           //   botResponse = botResponse.replace(/(http[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
           // }
 
+          // Supprimer l'animation de chargement
+          const typingBubble = chatOutput.querySelector('.typing-bubble');
+          typingBubble.remove();
+
           // Afficher et sauvegarder la réponse du bot
-          chatOutput.innerHTML += `<p class="bot-message"> ${botResponse}</p>`;
+          chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
           scrollToBottom();
         } else {

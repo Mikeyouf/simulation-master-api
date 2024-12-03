@@ -1,30 +1,49 @@
-import Glider from 'glider-js'; // Importation de Glider.js
-import 'glider-js/glider.min.css'; // Importation du fichier CSS de Glider
-import './style.css'; // Ton fichier CSS personnalisé
+import Glider from 'glider-js';
+import 'glider-js/glider.min.css';
+import './style.css';
 
-document.addEventListener('DOMContentLoaded', function () {
-  const isMobile = window.innerWidth <= 768;
+document.addEventListener('DOMContentLoaded', () => {
+  // Mise à jour de l'année dans le footer
+  document.getElementById('current-year').textContent = new Date().getFullYear();
 
-  new Glider(document.querySelector('.glider'), {
+  // Initialisation de Glider.js avec glissement désactivé
+  const glider = new Glider(document.querySelector('.glider'), {
     slidesToShow: 1,
     dots: '#dots',
     draggable: false,
-    loop: true,
-    controls: true,
-    rewind: true,
-    scrollLock: isMobile,
+    scrollLock: true,
     arrows: {
       prev: '.glider-prev',
       next: '.glider-next'
-    }
+    },
+    scrollPropagate: false
   });
 
-  // window.addEventListener('resize', function () {
-  //   // Actualise la détection mobile si la fenêtre est redimensionnée
-  //   const isMobile = window.innerWidth <= 768;
-  //   glider.setOption({
-  //     draggable: isMobile
-  //   });
-  // });
+  // Gestion des boutons de navigation
+  const buttons = document.querySelectorAll('.nav-button');
+  
+  buttons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+      glider.scrollItem(index);
+      updateActiveButton(index);
+    });
+  });
 
+  // Mise à jour des boutons lors du défilement
+  glider.ele.addEventListener('glider-slide-visible', () => {
+    updateActiveButton(glider.getCurrentSlide());
+  });
+
+  function updateActiveButton(activeIndex) {
+    buttons.forEach((button, index) => {
+      if (index === activeIndex) {
+        button.classList.add('active');
+      } else {
+        button.classList.remove('active');
+      }
+    });
+  }
+
+  // Initialiser le premier bouton comme actif
+  updateActiveButton(0);
 });
