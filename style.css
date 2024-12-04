@@ -73,6 +73,7 @@ nav {
   flex: 1;
   position: relative;
   height: calc(100vh - var(--header-height) - var(--footer-height));
+  min-height: 0;
 }
 
 /* Glider Styles */
@@ -120,6 +121,7 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 0;
 }
 
 .chatbot-name {
@@ -139,9 +141,9 @@ nav {
   margin: 0 auto;
   border-radius: 12px;
   overflow: hidden;
-  flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .chat-interface {
@@ -149,7 +151,7 @@ nav {
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  min-height: 0;
 }
 
 .chat-window {
@@ -163,6 +165,7 @@ nav {
   background-repeat: no-repeat;
   background-position: bottom left;
   background-size: 100px 100px;
+  min-height: 0;
   max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--chat-input-height) - 5rem);
 }
 
@@ -221,33 +224,24 @@ nav {
 
 /* Footer Styles */
 .site-footer {
-  background-color: #f8f9fa;
+  background-color: #fff;
   padding: 1rem;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
   height: var(--footer-height);
-  border-top: 1px solid #eee;
 }
 
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
-.footer-nav {
-  display: flex;
-  gap: 1rem;
-}
-
-.footer-link {
+.footer-text {
+  text-align: center;
   color: #666;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-  color: var(--primary-color);
 }
 
 /* Styles des messages */
