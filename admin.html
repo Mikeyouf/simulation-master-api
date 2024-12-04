@@ -2,8 +2,11 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Chatbots Analytics</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -16,17 +19,49 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading.active {
+            display: flex;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+
     <div class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Dashboard Analytics</h1>
             <div class="flex space-x-4">
-                <button id="refreshBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                <button id="refreshBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
                     <i class="fas fa-sync-alt mr-2"></i>Rafraîchir
                 </button>
-                <select id="timeRange" class="border rounded-lg px-4 py-2">
+                <select id="timeRange" class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="24h">24 heures</option>
                     <option value="7d">7 jours</option>
                     <option value="30d">30 jours</option>
@@ -37,28 +72,28 @@
 
         <!-- Statistiques générales -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="card p-6">
+            <div class="card p-6 transition-transform hover:scale-105">
                 <h3 class="text-gray-500 text-sm mb-2">Total Conversations</h3>
                 <div class="flex items-center">
                     <span id="totalConversations" class="text-2xl font-bold">-</span>
                     <span class="text-green-500 ml-2 text-sm">+12%</span>
                 </div>
             </div>
-            <div class="card p-6">
+            <div class="card p-6 transition-transform hover:scale-105">
                 <h3 class="text-gray-500 text-sm mb-2">Messages Aujourd'hui</h3>
                 <div class="flex items-center">
                     <span id="todayMessages" class="text-2xl font-bold">-</span>
                     <span class="text-red-500 ml-2 text-sm">-5%</span>
                 </div>
             </div>
-            <div class="card p-6">
+            <div class="card p-6 transition-transform hover:scale-105">
                 <h3 class="text-gray-500 text-sm mb-2">Temps Réponse Moyen</h3>
                 <div class="flex items-center">
                     <span id="avgResponseTime" class="text-2xl font-bold">-</span>
                     <span class="text-gray-500 ml-2 text-sm">sec</span>
                 </div>
             </div>
-            <div class="card p-6">
+            <div class="card p-6 transition-transform hover:scale-105">
                 <h3 class="text-gray-500 text-sm mb-2">Utilisateurs Uniques</h3>
                 <div class="flex items-center">
                     <span id="uniqueUsers" class="text-2xl font-bold">-</span>
