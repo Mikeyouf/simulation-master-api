@@ -1,5 +1,6 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import './style.css';
+import { chatLogger } from './chat-logger.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   const chatInput = document.getElementById('chat-input-3');
@@ -60,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Afficher et sauvegarder le message utilisateur
       chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
+      await chatLogger.logMessage('citoyen-1', userMessage, 'user');
       chatInput.value = '';
       scrollToBottom();
 
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         </p>`;
         scrollToBottom();
 
+        const startTime = Date.now();
         const response = await fetch('/.netlify/functions/assistant', {
           method: 'POST',
           headers: {
@@ -100,6 +103,8 @@ document.addEventListener('DOMContentLoaded', async function () {
           // Afficher et sauvegarder la réponse du bot
           chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
+          const responseTime = Date.now() - startTime;
+          await chatLogger.logMessage('citoyen-1', botResponse, 'bot', responseTime);
           scrollToBottom();
         } else {
           const errorText = await response.text();

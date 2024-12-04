@@ -1,5 +1,6 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import './style.css';
+import { chatLogger } from './chat-logger.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   const chatInput = document.getElementById('chat-input-1');
@@ -66,16 +67,20 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Afficher et sauvegarder le message utilisateur
       chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
+      await chatLogger.logMessage('pompier', userMessage, 'user');
       chatInput.value = '';
       scrollToBottom();
 
       try {
         // Afficher l'animation pendant l'appel API
-        chatOutput.innerHTML += `<p class="bot-message typing-bubble">
-          <span></span><span></span><span></span>
-        </p>`;
+        chatOutput.innerHTML += `
+          <p class="bot-message typing">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </p>`;
         scrollToBottom();
 
+        const startTime = Date.now();
+        
         const response = await fetch('/.netlify/functions/assistant', {
           method: 'POST',
           headers: {
@@ -101,12 +106,14 @@ document.addEventListener('DOMContentLoaded', async function () {
           // }
 
           // Supprimer l'animation de chargement
-          const typingBubble = chatOutput.querySelector('.typing-bubble');
+          const typingBubble = chatOutput.querySelector('.typing');
           typingBubble.remove();
 
           // Afficher et sauvegarder la réponse du bot
           chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
+          const responseTime = Date.now() - startTime;
+          await chatLogger.logMessage('pompier', botResponse, 'bot', responseTime);
           scrollToBottom();
         } else {
           const errorText = await response.text();

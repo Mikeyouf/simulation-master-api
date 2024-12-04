@@ -1,5 +1,6 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import './style.css';
+import { chatLogger } from './chat-logger.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   const chatInput = document.getElementById('chat-input-5');
@@ -60,15 +61,19 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Afficher et sauvegarder le message utilisateur
       chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
+      await chatLogger.logMessage('citoyen-3', userMessage, 'user');
       chatInput.value = '';
       scrollToBottom();
 
-      // Ajouter l'animation des points
-      chatOutput.innerHTML += `<p class="bot-message typing-bubble">
-        <span></span><span></span><span></span>
-      </p>`;
+      // Afficher l'indicateur de chargement
+      chatOutput.innerHTML += `
+        <p class="bot-message typing">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </p>`;
       scrollToBottom();
 
+      const startTime = Date.now();
+      
       try {
         const response = await fetch('/.netlify/functions/assistant', {
           method: 'POST',
@@ -84,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         // Supprimer l'animation des points
-        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        const typingBubble = chatOutput.querySelector('.typing');
         if (typingBubble) {
           typingBubble.remove();
         }
@@ -99,6 +104,8 @@ document.addEventListener('DOMContentLoaded', async function () {
           // Afficher et sauvegarder la réponse du bot
           chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
+          const responseTime = Date.now() - startTime;
+          await chatLogger.logMessage('citoyen-3', botResponse, 'bot', responseTime);
           scrollToBottom();
         } else {
           const errorText = await response.text();
@@ -106,7 +113,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       } catch (error) {
         // Supprimer l'animation des points en cas d'erreur
-        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        const typingBubble = chatOutput.querySelector('.typing');
         if (typingBubble) {
           typingBubble.remove();
         }
