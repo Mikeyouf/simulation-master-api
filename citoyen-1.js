@@ -58,19 +58,22 @@ document.addEventListener('DOMContentLoaded', async function () {
   const sendMessage = async () => {
     const userMessage = chatInput.value;
     if (userMessage) {
-      // Afficher et sauvegarder le message utilisateur
+      // Afficher le message utilisateur
       chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
-      await chatLogger.logMessage('citoyen-1', userMessage, 'user');
+      
+      // Logger le message de manière asynchrone
+      chatLogger.logMessage('Météo', userMessage, 'user').catch(console.error);
+      
       chatInput.value = '';
       scrollToBottom();
 
-      // Ajouter l'animation des points
       try {
         // Afficher l'animation pendant l'appel API
-        chatOutput.innerHTML += `<p class="bot-message typing-bubble">
-          <span></span><span></span><span></span>
-        </p>`;
+        const typingBubble = document.createElement('p');
+        typingBubble.className = 'bot-message typing-bubble';
+        typingBubble.innerHTML = '<span></span><span></span><span></span>';
+        chatOutput.appendChild(typingBubble);
         scrollToBottom();
 
         const startTime = Date.now();
@@ -88,36 +91,29 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         // Supprimer l'animation des points
-        const typingBubble = chatOutput.querySelector('.typing-bubble');
-        if (typingBubble) {
-          typingBubble.remove();
-        }
+        typingBubble.remove();
 
         if (response.ok) {
           const data = await response.json();
-          let botResponse = data.botResponse;
-          botResponse = cleanResponse(botResponse);
-
+          let botResponse = cleanResponse(data.botResponse);
           existingThreadId = data.threadId;
 
-          // Afficher et sauvegarder la réponse du bot
+          // Afficher la réponse du bot
           chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
+          
+          // Logger la réponse du bot de manière asynchrone
           const responseTime = Date.now() - startTime;
-          await chatLogger.logMessage('citoyen-1', botResponse, 'bot', responseTime);
+          chatLogger.logMessage('Météo', botResponse, 'bot', responseTime).catch(console.error);
+          
           scrollToBottom();
         } else {
-          const errorText = await response.text();
-          chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> ${errorText}</p>`;
+          throw new Error('Failed to get response');
         }
       } catch (error) {
-        // Supprimer l'animation des points en cas d'erreur
-        const typingBubble = chatOutput.querySelector('.typing-bubble');
-        if (typingBubble) {
-          typingBubble.remove();
-        }
-        chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> Erreur de communication avec l'assistant</p>`;
-        console.error('Erreur lors de l\'envoi du message:', error);
+        console.error('Error:', error);
+        chatOutput.innerHTML += `<p class="error-message">Désolé, une erreur s'est produite.</p>`;
+        scrollToBottom();
       }
     }
   };

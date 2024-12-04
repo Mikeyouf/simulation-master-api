@@ -13,7 +13,18 @@ class ChatLogger {
     this.conversationId = localStorage.getItem('currentConversationId') || generateUUID();
     localStorage.setItem('currentConversationId', this.conversationId);
     this.messageQueue = [];
-    this.failedLogs = JSON.parse(localStorage.getItem('failedLogs') || '[]');
+    this.failedLogs = [];
+    this.isProcessing = false;
+    
+    // Charger les logs échoués du localStorage une seule fois
+    const storedFailedLogs = localStorage.getItem('failedLogs');
+    if (storedFailedLogs) {
+      this.failedLogs = JSON.parse(storedFailedLogs);
+      localStorage.removeItem('failedLogs'); // Les supprimer du localStorage
+    }
+    
+    // Démarrer le traitement des messages en arrière-plan
+    this.startMessageProcessor();
   }
 
   async logMessage(botType, message, sender, responseTime = 0) {
@@ -28,10 +39,41 @@ class ChatLogger {
       deviceInfo: navigator.userAgent
     };
 
-    // Sauvegarder dans le localStorage
-    this.saveToLocalStorage(logData);
+    // Ajouter à la queue de messages
+    this.messageQueue.push(logData);
+  }
 
-    // Essayer d'envoyer au serveur
+  sanitizeMessage(message) {
+    return typeof message === 'string' ? message.substring(0, 1000) : String(message).substring(0, 1000);
+  }
+
+  async startMessageProcessor() {
+    if (this.isProcessing) return;
+    
+    this.isProcessing = true;
+    while (true) {
+      try {
+        // Traiter les messages en attente
+        while (this.messageQueue.length > 0) {
+          const logData = this.messageQueue.shift();
+          await this.sendToServer(logData);
+        }
+
+        // Traiter les logs échoués
+        if (this.failedLogs.length > 0) {
+          const logData = this.failedLogs.shift();
+          await this.sendToServer(logData);
+        }
+
+        // Pause avant la prochaine itération
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error('Error in message processor:', error);
+      }
+    }
+  }
+
+  async sendToServer(logData) {
     try {
       const response = await fetch('/.netlify/functions/log-chat', {
         method: 'POST',
@@ -45,57 +87,11 @@ class ChatLogger {
         throw new Error('Failed to log message');
       }
     } catch (error) {
-      console.error('Error logging message:', error);
-      this.handleFailedLog(logData);
-    }
-  }
-
-  sanitizeMessage(message) {
-    return typeof message === 'string' ? message.substring(0, 1000) : String(message).substring(0, 1000);
-  }
-
-  saveToLocalStorage(logData) {
-    const logs = JSON.parse(localStorage.getItem('chatLogs') || '[]');
-    logs.push(logData);
-    // Garder seulement les 100 derniers messages
-    if (logs.length > 100) {
-      logs.shift();
-    }
-    localStorage.setItem('chatLogs', JSON.stringify(logs));
-  }
-
-  handleFailedLog(logData) {
-    this.failedLogs.push(logData);
-    if (this.failedLogs.length > 50) {
-      this.failedLogs.shift();
-    }
-    localStorage.setItem('failedLogs', JSON.stringify(this.failedLogs));
-  }
-
-  // Réessayer d'envoyer les logs échoués
-  async retryFailedLogs() {
-    const failedLogs = [...this.failedLogs];
-    this.failedLogs = [];
-    
-    for (const logData of failedLogs) {
-      try {
-        const response = await fetch('/.netlify/functions/log-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(logData)
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to log message');
-        }
-      } catch (error) {
-        this.failedLogs.push(logData);
+      this.failedLogs.push(logData);
+      if (this.failedLogs.length > 50) {
+        this.failedLogs.shift();
       }
     }
-
-    localStorage.setItem('failedLogs', JSON.stringify(this.failedLogs));
   }
 
   startNewConversation() {

@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Afficher et sauvegarder le message utilisateur
       chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
-      await chatLogger.logMessage('citoyen-2', userMessage, 'user');
+      await chatLogger.logMessage('Spacial', userMessage, 'user');
       chatInput.value = '';
       scrollToBottom();
 
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
         saveMessage('bot', botResponse);
         const responseTime = Date.now() - startTime;
-        await chatLogger.logMessage('citoyen-2', botResponse, 'bot', responseTime);
+        await chatLogger.logMessage('Spacial', botResponse, 'bot', responseTime);
         scrollToBottom();
       } else {
         const errorText = await response.text();
