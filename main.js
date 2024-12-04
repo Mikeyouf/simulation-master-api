@@ -3,9 +3,6 @@ import 'glider-js/glider.min.css';
 import './style.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Mise à jour de l'année dans le footer
-  document.getElementById('current-year').textContent = new Date().getFullYear();
-
   // Initialisation de Glider.js avec glissement désactivé
   const glider = new Glider(document.querySelector('.glider'), {
     slidesToShow: 1,
