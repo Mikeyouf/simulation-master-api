@@ -27,17 +27,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Mise à jour des boutons lors du défilement
-  glider.ele.addEventListener('glider-slide-visible', () => {
-    updateActiveButton(glider.getCurrentSlide());
+  glider.ele.addEventListener('glider-slide-visible', (event) => {
+    const currentSlide = glider.getCurrentSlide();
+    updateActiveButton(currentSlide);
+  });
+
+  // Ajouter un écouteur pour les changements de slide
+  glider.ele.addEventListener('glider-animated', () => {
+    const currentSlide = glider.getCurrentSlide();
+    updateActiveButton(currentSlide);
   });
 
   function updateActiveButton(activeIndex) {
+    if (activeIndex === undefined || activeIndex === null) return;
+    
     buttons.forEach((button, index) => {
-      if (index === activeIndex) {
-        button.classList.add('active');
-      } else {
-        button.classList.remove('active');
-      }
+      button.classList.toggle('active', index === activeIndex);
     });
   }
 
