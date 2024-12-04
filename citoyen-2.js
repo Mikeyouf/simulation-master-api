@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const chatInput = document.getElementById('chat-input-4');
   const chatOutput = document.getElementById('chat-output-4');
   const envoyerBtn = document.getElementById('envoyer-btn-4');
-  const ASSISTANT_ID_CITOYEN2 = 'asst_TOUKhERXwfs3BN387LIXmodn'; // À remplacer par l'ID correct
+  const ASSISTANT_ID_CITOYEN2 = 'asst_vRMO3U6fbiZrEO1CpkT4AaJb';
   const MAX_MESSAGES = 2000;
 
   let userId = localStorage.getItem('userId');
