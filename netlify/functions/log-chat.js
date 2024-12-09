@@ -19,8 +19,11 @@ exports.handler = async function(event, context) {
     const response = await fetch(SHEET_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Origin': 'http://localhost:56736'
       },
+      redirect: 'follow',
       body: JSON.stringify({
         timestamp: data.timestamp,
         conversationId: data.conversationId,
@@ -36,14 +39,17 @@ exports.handler = async function(event, context) {
     const responseData = await response.text();
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.error('Google Apps Script response:', responseData);
+      throw new Error(`HTTP error! status: ${response.status}, response: ${responseData}`);
     }
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
       body: JSON.stringify({ 
         message: 'Success',
@@ -51,16 +57,18 @@ exports.handler = async function(event, context) {
       })
     };
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in log-chat function:', error);
     return {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
       body: JSON.stringify({ 
-        message: 'Error logging chat', 
-        error: error.message 
+        error: error.message,
+        stack: error.stack
       })
     };
   }

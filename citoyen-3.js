@@ -61,15 +61,17 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Afficher et sauvegarder le message utilisateur
       chatOutput.innerHTML += `<p class="user-message">${userMessage}</p>`;
       saveMessage('user', userMessage);
-      await chatLogger.logMessage('Multitâches', userMessage, 'user');
+      await chatLogger.logMessage('Science humaine', userMessage, 'user');
       chatInput.value = '';
       scrollToBottom();
 
       // Afficher l'indicateur de chargement
       chatOutput.innerHTML += `
-        <p class="bot-message typing">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </p>`;
+        <div class="typing-bubble">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>`;
       scrollToBottom();
 
       const startTime = Date.now();
@@ -89,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         // Supprimer l'animation des points
-        const typingBubble = chatOutput.querySelector('.typing');
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
         if (typingBubble) {
           typingBubble.remove();
         }
@@ -105,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
           const responseTime = Date.now() - startTime;
-          await chatLogger.logMessage('Multitâches', botResponse, 'bot', responseTime);
+          await chatLogger.logMessage('Science humaine', botResponse, 'bot', responseTime);
           scrollToBottom();
         } else {
           const errorText = await response.text();
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       } catch (error) {
         // Supprimer l'animation des points en cas d'erreur
-        const typingBubble = chatOutput.querySelector('.typing');
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
         if (typingBubble) {
           typingBubble.remove();
         }

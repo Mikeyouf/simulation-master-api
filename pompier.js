@@ -74,9 +74,11 @@ document.addEventListener('DOMContentLoaded', async function () {
       try {
         // Afficher l'animation pendant l'appel API
         chatOutput.innerHTML += `
-          <p class="bot-message typing">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          </p>`;
+          <div class="typing-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>`;
         scrollToBottom();
 
         const startTime = Date.now();
@@ -105,9 +107,11 @@ document.addEventListener('DOMContentLoaded', async function () {
           //   botResponse = botResponse.replace(/(http[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
           // }
 
-          // Supprimer l'animation de chargement
-          const typingBubble = chatOutput.querySelector('.typing');
-          typingBubble.remove();
+          // Supprimer l'animation des points
+          const typingBubble = chatOutput.querySelector('.typing-bubble');
+          if (typingBubble) {
+            typingBubble.remove();
+          }
 
           // Afficher et sauvegarder la réponse du bot
           chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
@@ -120,6 +124,11 @@ document.addEventListener('DOMContentLoaded', async function () {
           chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> ${errorText}</p>`;
         }
       } catch (error) {
+        // Supprimer l'animation des points en cas d'erreur
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
         chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> Erreur de communication avec l'assistant</p>`;
         console.error('Erreur lors de l\'envoi du message:', error);
       }

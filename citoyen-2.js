@@ -65,50 +65,61 @@ document.addEventListener('DOMContentLoaded', async function () {
       chatInput.value = '';
       scrollToBottom();
 
-      // Afficher l'indicateur de chargement
-      chatOutput.innerHTML += `
-        <p class="bot-message typing">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </p>`;
-      scrollToBottom();
-
-      const startTime = Date.now();
-      
-      const response = await fetch('/.netlify/functions/assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userMessage,
-          thread_id: existingThreadId,
-          assistant_id: ASSISTANT_ID_CITOYEN2,
-          user_id: userId,
-        }),
-      });
-
-      // Supprimer l'indicateur de chargement
-      const typingBubble = chatOutput.querySelector('.typing');
-      if (typingBubble) {
-        typingBubble.remove();
-      }
-
-      if (response.ok) {
-        const data = await response.json();
-        let botResponse = data.botResponse;
-        botResponse = cleanResponse(botResponse);
-
-        existingThreadId = data.threadId;
-
-        // Afficher et sauvegarder la réponse du bot
-        chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
-        saveMessage('bot', botResponse);
-        const responseTime = Date.now() - startTime;
-        await chatLogger.logMessage('Spacial', botResponse, 'bot', responseTime);
+      try {
+        // Afficher l'animation pendant l'appel API
+        chatOutput.innerHTML += `
+          <div class="typing-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>`;
         scrollToBottom();
-      } else {
-        const errorText = await response.text();
-        chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> ${errorText}</p>`;
+
+        const startTime = Date.now();
+        
+        const response = await fetch('/.netlify/functions/assistant', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userMessage,
+            thread_id: existingThreadId,
+            assistant_id: ASSISTANT_ID_CITOYEN2,
+            user_id: userId,
+          }),
+        });
+
+        // Supprimer l'animation des points
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+          let botResponse = data.botResponse;
+          botResponse = cleanResponse(botResponse);
+
+          existingThreadId = data.threadId;
+
+          // Afficher et sauvegarder la réponse du bot
+          chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
+          saveMessage('bot', botResponse);
+          const responseTime = Date.now() - startTime;
+          await chatLogger.logMessage('Spacial', botResponse, 'bot', responseTime);
+          scrollToBottom();
+        } else {
+          const errorText = await response.text();
+          chatOutput.innerHTML += `<p class="bot-message"><strong>Erreur:</strong> ${errorText}</p>`;
+        }
+      } catch (error) {
+        // Supprimer l'animation des points en cas d'erreur
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
+        console.error(error);
       }
     }
   };

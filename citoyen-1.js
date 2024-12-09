@@ -70,10 +70,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       try {
         // Afficher l'animation pendant l'appel API
-        const typingBubble = document.createElement('p');
-        typingBubble.className = 'bot-message typing-bubble';
-        typingBubble.innerHTML = '<span></span><span></span><span></span>';
-        chatOutput.appendChild(typingBubble);
+        chatOutput.innerHTML += `
+          <div class="typing-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>`;
         scrollToBottom();
 
         const startTime = Date.now();
@@ -91,7 +93,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         // Supprimer l'animation des points
-        typingBubble.remove();
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
 
         if (response.ok) {
           const data = await response.json();
@@ -112,6 +117,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       } catch (error) {
         console.error('Error:', error);
+        // Supprimer l'animation des points en cas d'erreur
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
         chatOutput.innerHTML += `<p class="error-message">Désolé, une erreur s'est produite.</p>`;
         scrollToBottom();
       }

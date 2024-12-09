@@ -84,9 +84,15 @@ class ChatLogger {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to log message');
+        // Stocker silencieusement dans failedLogs sans lever d'erreur
+        this.failedLogs.push(logData);
+        if (this.failedLogs.length > 50) {
+          this.failedLogs.shift();
+        }
+        return;
       }
     } catch (error) {
+      // Stocker silencieusement dans failedLogs sans lever d'erreur
       this.failedLogs.push(logData);
       if (this.failedLogs.length > 50) {
         this.failedLogs.shift();

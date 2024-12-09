@@ -74,9 +74,11 @@ document.addEventListener('DOMContentLoaded', async function () {
       try {
         // Afficher l'animation pendant l'appel API
         chatOutput.innerHTML += `
-          <p class="bot-message typing">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          </p>`;
+          <div class="typing-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>`;
         scrollToBottom();
 
         const startTime = Date.now();
@@ -101,26 +103,34 @@ document.addEventListener('DOMContentLoaded', async function () {
 
           existingThreadId = data.threadId;
 
-          // Remplacer l'animation par la réponse du bot
-          const messages = chatOutput.getElementsByClassName('bot-message');
-          const lastMessage = messages[messages.length - 1];
-          lastMessage.innerHTML = `<p class="bot-message">${botResponse}</p>`;
-          lastMessage.classList.remove('typing');
+          // Supprimer l'animation des points
+          const typingBubble = chatOutput.querySelector('.typing-bubble');
+          if (typingBubble) {
+            typingBubble.remove();
+          }
 
+          // Afficher la réponse du bot
+          chatOutput.innerHTML += `<p class="bot-message">${botResponse}</p>`;
           saveMessage('bot', botResponse);
           const responseTime = Date.now() - startTime;
           await chatLogger.logMessage('Cartographie et logiciel', botResponse, 'bot', responseTime);
           scrollToBottom();
         } else {
           const errorText = await response.text();
-          const messages = chatOutput.getElementsByClassName('bot-message');
-          const lastMessage = messages[messages.length - 1];
-          lastMessage.innerHTML = `<strong>Erreur:</strong> ${errorText}`;
+          // Supprimer l'animation des points en cas d'erreur
+          const typingBubble = chatOutput.querySelector('.typing-bubble');
+          if (typingBubble) {
+            typingBubble.remove();
+          }
+          chatOutput.innerHTML += `<strong>Erreur:</strong> ${errorText}`;
         }
       } catch (error) {
-        const messages = chatOutput.getElementsByClassName('bot-message');
-        const lastMessage = messages[messages.length - 1];
-        lastMessage.innerHTML = `<strong>Erreur:</strong> Erreur de communication avec l'assistant`;
+        // Supprimer l'animation des points en cas d'erreur
+        const typingBubble = chatOutput.querySelector('.typing-bubble');
+        if (typingBubble) {
+          typingBubble.remove();
+        }
+        chatOutput.innerHTML += `<strong>Erreur:</strong> Erreur de communication avec l'assistant`;
         console.error('Erreur lors de l\'envoi du message:', error);
       }
     }
