@@ -16,21 +16,13 @@
 
 [[redirects]]
   from = "/admin"
-  to = "/.netlify/functions/admin-middleware"
+  to = "/admin.html"
   status = 200
-  force = true
-
-[[redirects]]
-  from = "/admin.html"
-  to = "/.netlify/functions/admin-middleware"
-  status = 200
-  force = true
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
   conditions = {Role = ["!"]}
 
 [[headers]]
