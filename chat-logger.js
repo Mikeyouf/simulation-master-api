@@ -15,6 +15,7 @@ class ChatLogger {
     this.messageQueue = [];
     this.failedLogs = [];
     this.isProcessing = false;
+    this.processedMessageIds = new Set();
     
     // Charger les logs échoués du localStorage une seule fois
     const storedFailedLogs = localStorage.getItem('failedLogs');
@@ -28,7 +29,9 @@ class ChatLogger {
   }
 
   async logMessage(botType, message, sender, responseTime = 0) {
+    const messageId = generateUUID();
     const logData = {
+      messageId,
       conversationId: this.conversationId,
       timestamp: new Date().toISOString(),
       botType,
@@ -38,6 +41,12 @@ class ChatLogger {
       responseTime,
       deviceInfo: navigator.userAgent
     };
+
+    // Vérifier si ce message a déjà été traité
+    if (this.processedMessageIds.has(messageId)) {
+      console.log('Message déjà traité, ignoré:', messageId);
+      return;
+    }
 
     // Ajouter à la queue de messages
     this.messageQueue.push(logData);
@@ -56,13 +65,25 @@ class ChatLogger {
         // Traiter les messages en attente
         while (this.messageQueue.length > 0) {
           const logData = this.messageQueue.shift();
-          await this.sendToServer(logData);
+          if (!this.processedMessageIds.has(logData.messageId)) {
+            await this.sendToServer(logData);
+            this.processedMessageIds.add(logData.messageId);
+            
+            // Limiter la taille du Set pour éviter une croissance infinie
+            if (this.processedMessageIds.size > 1000) {
+              const idsArray = Array.from(this.processedMessageIds);
+              this.processedMessageIds = new Set(idsArray.slice(-500));
+            }
+          }
         }
 
         // Traiter les logs échoués
         if (this.failedLogs.length > 0) {
           const logData = this.failedLogs.shift();
-          await this.sendToServer(logData);
+          if (!this.processedMessageIds.has(logData.messageId)) {
+            await this.sendToServer(logData);
+            this.processedMessageIds.add(logData.messageId);
+          }
         }
 
         // Pause avant la prochaine itération
@@ -84,18 +105,22 @@ class ChatLogger {
       });
 
       if (!response.ok) {
-        // Stocker silencieusement dans failedLogs sans lever d'erreur
-        this.failedLogs.push(logData);
-        if (this.failedLogs.length > 50) {
-          this.failedLogs.shift();
+        // Ne stocker dans failedLogs que si le message n'a pas déjà été traité
+        if (!this.processedMessageIds.has(logData.messageId)) {
+          this.failedLogs.push(logData);
+          if (this.failedLogs.length > 50) {
+            this.failedLogs.shift();
+          }
         }
         return;
       }
     } catch (error) {
-      // Stocker silencieusement dans failedLogs sans lever d'erreur
-      this.failedLogs.push(logData);
-      if (this.failedLogs.length > 50) {
-        this.failedLogs.shift();
+      // Ne stocker dans failedLogs que si le message n'a pas déjà été traité
+      if (!this.processedMessageIds.has(logData.messageId)) {
+        this.failedLogs.push(logData);
+        if (this.failedLogs.length > 50) {
+          this.failedLogs.shift();
+        }
       }
     }
   }

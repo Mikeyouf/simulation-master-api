@@ -1,16 +1,20 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
-exports.handler = async function(event, context) {
+export const handler = async function(event, context) {
+  console.log('[get-analytics] Début du handler');
+  console.log('[get-analytics] Méthode HTTP:', event.httpMethod);
+
   // Activer CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json; charset=utf-8'
   };
 
   // Gérer les requêtes OPTIONS pour CORS
   if (event.httpMethod === 'OPTIONS') {
+    console.log('[get-analytics] Réponse CORS OPTIONS');
     return {
       statusCode: 200,
       headers,
@@ -19,129 +23,59 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const { timeRange = '24h' } = event.queryStringParameters || {};
-
-    // URL de votre Google Apps Script
+    // URL de l'Apps Script
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyMZOfv9dMBXdsopgnEj-tafXUNaDku_-oQFm1yilVeeHx38orSmppBNwBW8CGDv8daDQ/exec';
-
-    console.log('Fetching data from:', SHEET_URL);
-    console.log('Time range:', timeRange);
-
-    // Récupérer les données depuis Google Sheets
-    const response = await fetch(`${SHEET_URL}?timeRange=${timeRange}`, {
+    
+    console.log('[get-analytics] Tentative de connexion à:', SHEET_URL);
+    
+    // Options pour fetch
+    const fetchOptions = {
       method: 'GET',
+      timeout: 30000, // 30 secondes de timeout
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'User-Agent': 'Analytics-Dashboard/1.0',
       }
-    });
-
+    };
+    
+    // Faire la requête à Google Apps Script
+    const response = await fetch(SHEET_URL, fetchOptions);
+    console.log('[get-analytics] Status de la réponse:', response.status);
+    console.log('[get-analytics] Headers de la réponse:', Object.fromEntries(response.headers));
+    
     if (!response.ok) {
-      console.error('Google Sheets response not OK:', response.status, response.statusText);
       const errorText = await response.text();
-      console.error('Error response:', errorText);
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.error('[get-analytics] Contenu de l\'erreur:', errorText);
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
-
-    const rawData = await response.json();
-    console.log('Received data:', JSON.stringify(rawData).slice(0, 200) + '...');
-
-    if (!Array.isArray(rawData)) {
-      console.error('Unexpected data format:', rawData);
-      throw new Error('Invalid data format received from Google Sheets');
+    
+    const data = await response.json();
+    console.log('[get-analytics] Type de données reçues:', typeof data);
+    console.log('[get-analytics] Structure des données:', Object.keys(data));
+    
+    if (!data || !data.data) {
+      throw new Error('Format de données invalide reçu de Google Apps Script');
     }
-
-    // Traiter les données pour le dashboard
-    const processedData = processData(rawData, timeRange);
-    console.log('Processed data:', JSON.stringify(processedData).slice(0, 200) + '...');
-
+    
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify(processedData)
+      body: JSON.stringify(data)
     };
-
+    
   } catch (error) {
-    console.error('Error in get-analytics:', error);
+    console.error('[get-analytics] Erreur détaillée:', error);
+    console.error('[get-analytics] Stack trace:', error.stack);
+    
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        error: 'Error fetching analytics data',
-        details: error.message,
-        timestamp: new Date().toISOString()
+      body: JSON.stringify({
+        status: 'error',
+        message: 'Erreur lors de la récupération des données',
+        error: error.message,
+        stack: error.stack
       })
     };
   }
 };
-
-function processData(rawData, timeRange) {
-  console.log('Processing data, count:', rawData.length);
-
-  // Calculer les statistiques
-  const messagesByBot = {};
-  const activityByHour = new Array(24).fill(0);
-  const uniqueUsers = new Set();
-  let totalResponseTime = 0;
-  let messageCount = 0;
-
-  rawData.forEach(message => {
-    try {
-      // Messages par bot
-      if (message.botType) {
-        messagesByBot[message.botType] = (messagesByBot[message.botType] || 0) + 1;
-      }
-
-      // Activité par heure
-      if (message.timestamp) {
-        const hour = new Date(message.timestamp).getHours();
-        if (!isNaN(hour)) {
-          activityByHour[hour]++;
-        }
-      }
-
-      // Utilisateurs uniques
-      if (message.userId) {
-        uniqueUsers.add(message.userId);
-      }
-
-      // Temps de réponse moyen
-      if (message.responseTime && !isNaN(message.responseTime)) {
-        totalResponseTime += parseFloat(message.responseTime);
-        messageCount++;
-      }
-    } catch (error) {
-      console.error('Error processing message:', error, message);
-    }
-  });
-
-  // Formater les données pour les graphiques
-  const hours = Array.from({length: 24}, (_, i) => `${i}:00`);
-  
-  const result = {
-    totalConversations: new Set(rawData.filter(m => m.conversationId).map(m => m.conversationId)).size,
-    todayMessages: rawData.filter(m => {
-      try {
-        const messageDate = new Date(m.timestamp);
-        const today = new Date();
-        return messageDate.toDateString() === today.toDateString();
-      } catch (error) {
-        console.error('Error processing message date:', error, m);
-        return false;
-      }
-    }).length,
-    avgResponseTime: messageCount ? totalResponseTime / messageCount : 0,
-    uniqueUsers: uniqueUsers.size,
-    messagesByBot,
-    activityByHour: {
-      hours,
-      counts: activityByHour
-    },
-    recentConversations: rawData
-      .filter(m => m.timestamp && m.conversationId) // Filtrer les messages valides
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .slice(0, 10)
-  };
-
-  console.log('Processed result:', JSON.stringify(result).slice(0, 200) + '...');
-  return result;
-}

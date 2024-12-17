@@ -11,5 +11,14 @@ export default {
         rewrite: (path) => path.replace(/^\/\.netlify\/functions/, '')
       }
     }
+  },
+  // Configuration pour servir admin.html sur la route /admin
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        admin: 'admin.html'
+      }
+    }
   }
 }

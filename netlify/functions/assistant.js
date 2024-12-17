@@ -69,7 +69,7 @@ async function getMessages(threadId) {
   return messageData.data.filter(message => message.role === "assistant");
 }
 
-export async function handler(event, context) {
+export const handler = async (event, context) => {
   const {
     userMessage,
     thread_id,
