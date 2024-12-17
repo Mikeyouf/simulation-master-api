@@ -18,10 +18,6 @@ export default {
         main: 'index.html',
         admin: 'admin.html'
       }
-    },
-    // Assurer que les assets sont correctement générés
-    assetsDir: 'assets',
-    // Générer des sourcemaps pour le débogage
-    sourcemap: true
+    }
   }
 }
