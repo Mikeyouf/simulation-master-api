@@ -1,3 +1,5 @@
+// Importation des dépendances (si nécessaire)
+
 class DashboardAdmin {
     constructor() {
         this.data = null;
@@ -498,5 +500,5 @@ class DashboardAdmin {
     }
 }
 
-// Initialiser le dashboard
-new DashboardAdmin();
+// Exporter la classe et créer une instance
+export const dashboardAdmin = new DashboardAdmin();

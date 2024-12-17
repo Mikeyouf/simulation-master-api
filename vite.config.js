@@ -12,12 +12,18 @@ export default {
       }
     }
   },
-  // Configuration pour servir admin.html sur la route /admin
   build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
     rollupOptions: {
       input: {
         main: 'index.html',
         admin: 'admin.html'
+      },
+      output: {
+        entryFileNames: `assets/[name].[hash].js`,
+        chunkFileNames: `assets/[name].[hash].js`,
+        assetFileNames: `assets/[name].[hash].[ext]`
       }
     }
   }
