@@ -40,7 +40,7 @@ async function runAssistant(threadId, assistantId) {
     },
     body: JSON.stringify({
       assistant_id: assistantId, // Utiliser l'ID de l'assistant dynamique
-      max_tokens: 150,
+      max_tokens_to_sample: 150
     }),
   });
   const runData = await runResponse.json();
