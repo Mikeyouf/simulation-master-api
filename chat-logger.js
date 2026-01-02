@@ -104,18 +104,19 @@ class ChatLogger {
         body: JSON.stringify(logData)
       });
 
-      if (!response.ok) {
-        // Ne stocker dans failedLogs que si le message n'a pas déjà été traité
+      // Ignorer silencieusement les erreurs 500 car les données sont quand même écrites dans la Sheet
+      // On ne stocke dans failedLogs que les vraies erreurs réseau
+      if (!response.ok && response.status !== 500) {
         if (!this.processedMessageIds.has(logData.messageId)) {
           this.failedLogs.push(logData);
           if (this.failedLogs.length > 50) {
             this.failedLogs.shift();
           }
         }
-        return;
       }
     } catch (error) {
-      // Ne stocker dans failedLogs que si le message n'a pas déjà été traité
+      // Erreur réseau réelle (pas de réponse du serveur)
+      console.warn('[chat-logger] Erreur réseau:', error);
       if (!this.processedMessageIds.has(logData.messageId)) {
         this.failedLogs.push(logData);
         if (this.failedLogs.length > 50) {

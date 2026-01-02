@@ -50,7 +50,8 @@ export const handler = async function(event, context) {
       message: data.message,
       sender: data.sender || 'user',
       responseTime: data.responseTime || 0,
-      deviceInfo: JSON.stringify(data.deviceInfo || {})
+      deviceInfo: data.deviceInfo || '',
+      messageId: data.messageId || ''
     };
     
     console.log('[log-chat] Données formatées:', formattedData);
@@ -59,17 +60,8 @@ export const handler = async function(event, context) {
     const response = await fetch(SHEET_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'User-Agent': 'Netlify-Function/1.0',
-        'Cache-Control': 'no-cache',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Origin': 'https://script.google.com',
-        'Referer': 'https://script.google.com/'
+        'Content-Type': 'application/json'
       },
-      redirect: 'follow',
-      mode: 'cors',
-      credentials: 'omit',
       body: JSON.stringify(formattedData)
     });
 
