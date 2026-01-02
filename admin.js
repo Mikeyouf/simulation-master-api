@@ -202,16 +202,8 @@ class DashboardAdmin {
                 throw new Error('Format de données invalide');
             }
 
-            // Transformer les données reçues dans le format attendu
-            const conversations = result.data.map(item => ({
-                timestamp: item.Timestamp,
-                conversationId: item['Conversation ID'],
-                botType: item['Bot Type '] ? item['Bot Type '].trim() : '',
-                userId: item['User ID'] || '',
-                message: item['Message Content'] || '',
-                sender: item['Sender '] ? item['Sender '].trim() : '',
-                deviceInfo: item['Device Info'] || ''
-            }));
+            // Les données sont déjà au bon format depuis Apps Script
+            const conversations = result.data;
 
             // Réinitialiser la page courante lors du rafraîchissement des données
             this.currentPage = 1;
