@@ -325,7 +325,11 @@ nav {
 @media screen and (max-width: 768px) {
   :root {
     --header-height: 90px;
-    --footer-height: 50px;
+    --footer-height: 0px;
+  }
+
+  .site-footer {
+    display: none;
   }
 
   .header-content h1 {
@@ -397,7 +401,11 @@ nav {
 @media screen and (max-width: 768px) {
   :root {
     --header-height: 100px;
-    --footer-height: 50px;
+    --footer-height: 0px;
+  }
+
+  .site-footer {
+    display: none;
   }
 
   .chatbot-container {
