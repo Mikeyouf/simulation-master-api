@@ -359,10 +359,13 @@ nav {
   .chat-input-container {
     padding: 0.5rem;
     height: 60px;
+    flex-shrink: 0;
   }
 
   .chat-window {
     padding: 0.5rem;
+    max-height: calc(100vh - var(--header-height) - var(--footer-height) - 100px);
+    overflow-y: auto;
   }
 
   h2 {
@@ -414,10 +417,13 @@ nav {
 
   .chat-input-container {
     padding: 0.5rem;
+    flex-shrink: 0;
   }
 
   .chat-window {
     padding: 0.5rem;
+    max-height: calc(100vh - var(--header-height) - var(--footer-height) - 100px);
+    overflow-y: auto;
   }
 }
 
